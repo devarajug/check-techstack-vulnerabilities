@@ -24,10 +24,11 @@ project_tech_stack_details = {
     "Apache Tomcat 8.5.63" : "cpe:/a:apache:tomcat:8.5.63",
 }
 ```
-cpe url can be found in [NVD](https://nvd.nist.gov/products/cpe/search) website
+CPE url can be found in [NVD](https://nvd.nist.gov/products/cpe/search) website
+
 # License
 
 Copyright (c) 2021 Devaraju Garigapati
 
-This repository is licensed under the MIT license.
-See LICENSE for details.
+This repository is licensed under the [MIT](https://opensource.org/licenses/MIT) license.
+See [LICENSE](https://opensource.org/licenses/MIT) for details.
