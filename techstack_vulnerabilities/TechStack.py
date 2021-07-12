@@ -1,47 +1,42 @@
 ## required imports
-import re
-import os
 import sys
-import json
 import warnings
 import requests
 import pandas as pd
-from datetime import datetime
 from bs4 import BeautifulSoup
 from openpyxl import Workbook
 from requests.auth import HTTPProxyAuth
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment, PatternFill
 
-class ThirdPartyComponentCheck:
+class TechStackVulnerabilities:
 
-    def __init__(self):
+    def __init__(self, 
+        techstackData,
+        output_report_path,
+        proxyname=None, 
+        proxyport=None, 
+        proxyusername=None, 
+        proxypassword=None):
         warnings.filterwarnings('ignore')
-        self.proxyusername = None #provide if you running this script behind proxy
-        self.proxypassword = None #provide if you running this script behind proxy
+        self.proxyusername = proxyusername 
+        self.proxypassword = proxypassword
+        self.proxyname = proxyname
+        self.proxyport = proxyport 
         self.url = "https://nvd.nist.gov/vuln/search/results?query="
         self.noOfIssuesCount = None
         self.countFrom = None
         self.countThrough = None
-        self.startIndex = 0
-        self.today = datetime.today().strftime('%d-%m-%Y')
-        self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.auditor_comments_file = os.path.join(os.path.dirname(self.base_dir), 'Scripts', 'auditor_comments.json')
-        self.output_file_name ='TechStack-report-Jile-' + self.today + '.xlsx'
-        self.cpeMatchStrings = {
-            "spring_framework 5.2.9" : "cpe:/a:pivotal_software:spring_framework:5.2.9",
-            "PostgreSQL 11.10" : "cpe:/a:postgresql:postgresql:11.10",
-            "Amazon Corretto 1.8.0_252" : "cpe:/a:oracle:jdk:1.8.0:update_252",
-            "Apache Tomcat 8.5.63" : "cpe:/a:apache:tomcat:8.5.63",
-            "Apache Tomcat 9.0.43" : "cpe:/a:apache:tomcat:9.0.43"
-        }
+        self.startIndex = 0        
+        self.output_file_name = output_report_path
+        self.cpeMatchStrings = techstackData
 
     def getDataFromWeb(self, url):
         try:
             request = requests.Session()
             proxies = {
-                'http':"http://proxy.tcs.com:8080",
-                'https':"https://proxy.tcs.com:8080"
+                'http':"http://"+str(self.proxyname)+":"+str(self.proxyport),
+                'https':"https:"+str(self.proxyname)+":"+str(self.proxyport)
             }
             if self.proxyusername and self.proxypassword:
                 auth = HTTPProxyAuth(self.proxyusername, self.proxypassword)
@@ -53,24 +48,10 @@ class ThirdPartyComponentCheck:
 
         except Exception as e:
             data = None
-            print("error in getDataFromWeb method.......")
+            print("Unable fetch data from nvd database please try after sometime........")
             sys.exit(e)
 
         return data
-
-    def readAuditorCommentsFile(self):
-        Jile_CVC_DATA = {}
-        if os.path.isfile(self.auditor_comments_file):
-            try:
-                with open(self.auditor_comments_file, 'r') as rb:
-                    Jile_CVC_DATA = json.loads(rb.read())
-            except Exception as e:
-                Jile_CVC_DATA = {}
-                print("error in readAuditorCommentsFile method")
-                sys.exit(e)
-        else:
-            print("auditor comments file Not present at " + str(os.path.dirname(self.auditor_comments_file)))
-        return Jile_CVC_DATA
 
     def scrapeTechStackData(self, cpe, startIndex=0):
         try:
@@ -83,15 +64,15 @@ class ThirdPartyComponentCheck:
             TechStackData = parsed_data.select_one('table[data-testid=vuln-results-table]')
         except Exception as e:
             TechStackData = None
-            print("error in scrapeTechStackData method.")
+            print("Unable fetch data from nvd database please try after sometime........")
             sys.exit(e)
         return TechStackData
 
-    def techStackDataToDf(self, Jile_CVC_DATA={}):
+    def techStackDataToDf(self):
         try:
             print()
             print("Analysis Started. It Takes Time to Complete, Please Wait Patiently")
-            productname, cve, severity, description, auditor_comment, status = [[] for i in range(6)]
+            productname, cve, severity, description, status = [[] for i in range(5)]
             for product, cpe in self.cpeMatchStrings.items():
                 print()
                 data = self.scrapeTechStackData(cpe=cpe)
@@ -100,7 +81,6 @@ class ThirdPartyComponentCheck:
                     cve.append("No vulnerability")
                     severity.append("No vulnerability")
                     description.append("No vulnerability")
-                    auditor_comment.append('No vulnerability')
                     status.append("Closed")
                     print(productname[-1]+ " : " + cve[-1] + " : " + severity[-1])
                 elif self.noOfIssuesCount <= 20:
@@ -124,8 +104,7 @@ class ThirdPartyComponentCheck:
                                 cvss2_score_severity = cvss2.split(":")[-1]
                                 cvss2_severity = cvss2_score_severity.split(" ")[-1]
                                 severity.append(cvss2_severity.strip())
-                            status.append(Jile_CVC_DATA.get(productname[-1], {}).get(cve[-1], {}).get("Status", "Open"))
-                            auditor_comment.append(Jile_CVC_DATA.get(productname[-1], {}).get(cve[-1], {}).get("Comment", "need add in JsonFile"))
+                            status.append("Open")
                             non_dispute_issues_count+=1
                         print(productname[-1]+ " : " + cve[-1] + " : " + severity[-1])
                     else:
@@ -134,7 +113,6 @@ class ThirdPartyComponentCheck:
                             cve.append("No vulnerability")
                             severity.append("No vulnerability")
                             description.append("No vulnerability")
-                            auditor_comment.append('No vulnerability')
                             status.append("Closed")
                             print(productname[-1]+ " : " + cve[-1] + " : " + severity[-1])
                 elif self.noOfIssuesCount > 20:
@@ -159,8 +137,7 @@ class ThirdPartyComponentCheck:
                                     cvss2_score_severity = cvss2.split(":")[-1]
                                     cvss2_severity = cvss2_score_severity.split(" ")[-1]
                                     severity.append(cvss2_severity.strip())
-                                status.append(Jile_CVC_DATA.get(productname[-1], {}).get(cve[-1], {}).get("Status", "Open"))
-                                auditor_comment.append(Jile_CVC_DATA.get(productname[-1], {}).get(cve[-1], {}).get("Comment", "need add in JsonFile"))
+                                status.append("Open")
                                 count_while+=1
                             print(productname[-1]+ " : " + cve[-1] + " : " + severity[-1])
                         self.startIndex+=20
@@ -170,25 +147,25 @@ class ThirdPartyComponentCheck:
                             cve.append("No vulnerability")
                             severity.append("No vulnerability")
                             description.append("No vulnerability")
-                            auditor_comment.append('No vulnerability')
                             status.append("Closed")
                             print(productname[-1]+ " : " + cve[-1] + " : " + severity[-1])
                 else:
                     sys.exit("some thing went wrong pls re run the script")
-            result_data_tech_stack = zip(productname,description,cve,severity, status, auditor_comment)
+            result_data_tech_stack = zip(productname,description,cve,severity, status)
             df_tech_stack = pd.DataFrame(
                 list(result_data_tech_stack),
-                columns = ['Product','Description','CVE','Severity', 'Status', 'Auditor Comment']
+                columns = ['Product','Description','CVE','Severity', 'Status']
             )
         except Exception as e:
             df_tech_stack = None
-            print("error in techStackDataToDf method")
+            print("Unable fetch data from nvd database please try after sometime........")
             sys.exit(e)
 
         return df_tech_stack
 
-    def makeXLfromDf(self, df_tech_stack):
+    def makeXLfromDf(self):
         try:
+            df_tech_stack = self.techStackDataToDf()
             workbook = Workbook()
             workbook.remove(workbook.active)
             header_font = Font(name='Calibri',bold=True,color='FFFFFF')
@@ -224,8 +201,7 @@ class ThirdPartyComponentCheck:
                         (df_tech_stack.loc[i,'Description'],'Normal'),
                         (df_tech_stack.loc[i,'CVE'],'Normal'),
                         (df_tech_stack.loc[i,'Severity'],'Normal'),
-                        (df_tech_stack.loc[i,'Status'],'Normal'),
-                        (df_tech_stack.loc[i,'Auditor Comment'],'Normal')
+                        (df_tech_stack.loc[i,'Status'],'Normal')
                     ]
                     for col_num, (cell_value, cell_format) in enumerate(row, 1):
                         cell = worksheet.cell(row=row_num, column=col_num)
@@ -243,11 +219,3 @@ class ThirdPartyComponentCheck:
         except Exception as e:
             print("Unable to create xls....")
             sys.exit(e)
-
-if __name__ == "__main__":
-
-    df_cvc, df_tech_stack = None, None
-    TPC = ThirdPartyComponentCheck()
-    Jile_CVC_DATA = TPC.readAuditorCommentsFile()
-    df_tech_stack = TPC.techStackDataToDf(Jile_CVC_DATA=Jile_CVC_DATA)
-    TPC.makeXLfromDf(df_tech_stack=df_tech_stack)
