@@ -5,7 +5,6 @@ The use of this module is to generate xls file containing known vulnerabilities 
 
 ```
 pip install check-techstack-vulnerabilities
-
 ```
 
 # How to use
