@@ -23,6 +23,8 @@ project_tech_stack_details = {
     "Amazon Corretto 1.8.0_252" : "cpe:/a:oracle:jdk:1.8.0:update_252",
     "Apache Tomcat 8.5.63" : "cpe:/a:apache:tomcat:8.5.63",
 }
+
+output_file_path = "D:\\dir\\techstack-vulnerabilities-report-project-version.xlsx"
 ```
 CPE url can be found in [NVD](https://nvd.nist.gov/products/cpe/search) website
 
