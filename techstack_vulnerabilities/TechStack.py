@@ -11,12 +11,8 @@ from openpyxl.styles import Font, Alignment, PatternFill
 
 class TechStackVulnerabilities:
 
-    def __init__(self, 
-        techstackData,
-        output_report_path,
-        proxyname=None, 
-        proxyport=None, 
-        proxyusername=None, 
+    def __init__(self, techstackData, output_report_path,
+        proxyname=None, proxyport=None, proxyusername=None, 
         proxypassword=None):
         warnings.filterwarnings('ignore')
         self.proxyusername = proxyusername 
@@ -36,7 +32,7 @@ class TechStackVulnerabilities:
             request = requests.Session()
             proxies = {
                 'http':"http://"+str(self.proxyname)+":"+str(self.proxyport),
-                'https':"https:"+str(self.proxyname)+":"+str(self.proxyport)
+                'https':"https://"+str(self.proxyname)+":"+str(self.proxyport)
             }
             if self.proxyusername and self.proxypassword:
                 auth = HTTPProxyAuth(self.proxyusername, self.proxypassword)
