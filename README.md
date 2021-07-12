@@ -25,9 +25,32 @@ project_tech_stack_details = {
 }
 
 output_file_path = "D:\\dir\\techstack-vulnerabilities-report-project-version.xlsx"
+
+ctv = TechStackVulnerabilities(
+    tech_cpes = project_tech_stack_details,
+    output_report_path = output_file_path
+)
+
+ctv.makeXL()
+
+## Usage behind corporate proxy
+
+ctv = TechStackVulnerabilities(
+    tech_cpes = project_tech_stack_details,
+    output_report_path = output_file_path,
+    proxyname = "proxy.company.com",
+    proxyport = "proxyport",
+    proxyusername = "proxyuser",
+    proxypassword = "XXXXXX"
+
+)
+
+ctv.makeXL()
+
 ```
 CPE url can be found in [NVD](https://nvd.nist.gov/products/cpe/search) website
 
+You can download sample report from [here](./sample-techstack.xlsx)
 # License
 
 Copyright (c) 2021 Devaraju Garigapati

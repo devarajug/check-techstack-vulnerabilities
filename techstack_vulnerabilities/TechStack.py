@@ -11,7 +11,7 @@ from openpyxl.styles import Font, Alignment, PatternFill
 
 class TechStackVulnerabilities:
 
-    def __init__(self, tech_urls, output_report_path,
+    def __init__(self, tech_cpes, output_report_path,
         proxyname=None, proxyport=None, proxyusername=None, 
         proxypassword=None):
         warnings.filterwarnings('ignore')
@@ -25,7 +25,7 @@ class TechStackVulnerabilities:
         self.countThrough = None
         self.startIndex = 0        
         self.output_file_name = output_report_path
-        self.cpeMatchStrings = tech_urls
+        self.cpeMatchStrings = tech_cpes
 
     def getDataFromWeb(self, url):
         try:
@@ -159,7 +159,7 @@ class TechStackVulnerabilities:
 
         return df_tech_stack
 
-    def makeXLfromDf(self):
+    def makeXL(self):
         try:
             df_tech_stack = self.techStackDataToDf()
             workbook = Workbook()
