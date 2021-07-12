@@ -9,7 +9,7 @@ pip install check-techstack-vulnerabilities
 
 # How to use
 ```
-from chce_techstack_vulnerabilities.TechStack import TechStackVulnerabilities
+from check_techstack_vulnerabilities.TechStack import TechStackVulnerabilities
 
 # project techstack details sysntax must be like below
 project_tech_stack_details = {
