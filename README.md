@@ -1,19 +1,20 @@
-# check-techstack-vulnerabilities
+# Check Techstack Vulnerabilities
+The use of this module is to generate xls file containing known vulnerabilities of tech details given as input.
+
+# Installation
 
 ```
-if __name__ == "__main__":
+pip install check-techstack-vulnerabilities
 
-    df_cvc, df_tech_stack = None, None
-    tsv = TechStackVulnerabilities(
-        techstackData={
-            "spring_framework 5.2.9" : "cpe:/a:pivotal_software:spring_framework:5.2.9",
-            "PostgreSQL 11.10" : "cpe:/a:postgresql:postgresql:11.10",
-            "Amazon Corretto 1.8.0_252" : "cpe:/a:oracle:jdk:1.8.0:update_252",
-            "Apache Tomcat 8.5.63" : "cpe:/a:apache:tomcat:8.5.63",
-            "Apache Tomcat 9.0.43" : "cpe:/a:apache:tomcat:9.0.43"
-        },
-
-        output_report_path = "D:\\learnings\\Jile-techstack.xlsx"
-    )
-    tsv.makeXLfromDf()
 ```
+
+# How to use
+
+
+
+# License
+
+Copyright (c) 2021 Devaraju Garigapati
+
+This repository is licensed under the MIT license.
+See LICENSE for details.
