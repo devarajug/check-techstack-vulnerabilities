@@ -9,7 +9,7 @@ README = (BASE / "README.md").read_text()
 
 #This call to setup does all the work
 setuptools.setup(
-    name="check_techstack_vunerabilities",
+    name="check-techstack-vulnerabilities",
     version="1.0.0",
     deecription="It generates xls file with known vulnerabilities of each techstack.",
     long_description=README,
