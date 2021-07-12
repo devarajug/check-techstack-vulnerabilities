@@ -1,5 +1,5 @@
 # Check Techstack Vulnerabilities
-The use of this module is to generate xls file containing known vulnerabilities of tech details given as input.
+The use of this module is to generate xls file containing known vulnerabilities of tech details which are given as input.
 
 # Installation
 
