@@ -50,7 +50,7 @@ ctv.makeXL()
 ```
 CPE url can be found in [NVD](https://nvd.nist.gov/products/cpe/search) website
 
-You can download sample report from [here](./sample-techstack.xlsx)
+You can download sample report from [here](https://github.com/devarajug/check-techstack-vulnerabilities/blob/master/sample-techstack.xlsx?raw=true)
 # License
 
 Copyright (c) 2021 Devaraju Garigapati
