@@ -10,7 +10,7 @@ README = (BASE / "README.md").read_text()
 #This call to setup does all the work
 setuptools.setup(
     name="check-techstack-vulnerabilities",
-    version="1.0.1",
+    version="1.0.2",
     deecription="Bug in url fixed.",
     long_description=README,
     long_description_content_type="text/markdown",

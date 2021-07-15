@@ -19,7 +19,7 @@ class TechStackVulnerabilities:
         self.proxypassword = proxypassword
         self.proxyname = proxyname
         self.proxyport = proxyport 
-        self.url = "https://nvd.nist.gov/vuln/search/results?adv_search=true&query="
+        self.url = "https://nvd.nist.gov/vuln/search/results?adv_search=true&isCpeNameSearch=true&query="
         self.noOfIssuesCount = None
         self.countFrom = None
         self.countThrough = None
